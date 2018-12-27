@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="vitdb.js"></script>
+        <script src="db.js"></script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10">
+                    <div class="page-header">
+                        <h1>Vitamin Database</h1>
+                    </div>
+                </div>
+                <div class="col-xs-1"></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10">
+                    <form>
+                        <div class="form-group">
+                            <label for="upcCode">UPC Code</label>
+                            <div class="input-group">
+                                <input id="search-text" type="text" class="form-control" id="upcCode" placeholder="UPC Code">
+                                <div class="input-group-btn">
+                                    <button id="search-btn" type="button" class="btn btn-default" aria-label="Search"><span class="glyphicon glyphicon-search"></span></button>
+                                    <button type="button" class="btn btn-default">Action</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-xs-1"></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-1"></div>
+                <div class="col-xs-10">
+                    <div id="results-group" class="list-group">
+                        <!-- <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">List group item heading</h4>
+                            <p class="list-group-item-text">...</p>
+                        </a> -->
+                    </div>
+                </div>
+                <div class="col-xs-1"></div>
+            </div>
+        </div>
+        <script type="text/javascript">
+var ctlSearchText = $('#search-text');
+var ctlSearchButton = $('#search-btn');
+var resultsGroup = $('#results-group');
+
+function buildItemHtml(rows) {
+    if (rows.length === 0) {
+        return; // NOT FOUND!
+    }
+
+    let item = rows.item(0);
+    let heading = item.upc + ' ' + item.brand;
+    for (var i=0; i < rows.length; i++) {
+        item = rows.item(i);
+    }
+    let divGroupItem = $('<div class="list-group-item"></div>');
+    let divHeading = $('<div class="list-group-item-heading">' + heading + '</div>');
+    divGroupItem.append(divHeading);
+    resultsGroup.prepend(divGroupItem);
+}
+
+function itemFound(tx, res) {
+    buildItemHtml(res.rows);
+}
+
+ctlSearchButton.click(() => {
+    vitdat.webdb.getVitamin(ctlSearchText.val(), itemFound);
+    
+    // Example url for upcitemdb
+    // https://api.upcitemdb.com/prod/trial/lookup?upc=747599602061
+});
+
+
+        </script>
+    </body>
+</html>
