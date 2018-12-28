@@ -13,6 +13,11 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script src="vitdb.js"></script>
         <script src="db.js"></script>
+        <style type="text/css">
+        #results-group .list-group-item-heading {
+            background-color: yellow;
+        }
+        </style>
     </head>
     <body>
         <div class="container-fluid">
@@ -72,13 +77,26 @@ function buildItemHtml(rows) {
 
     let item = rows.item(0);
     let heading = item.upc + ' ' + item.brand;
-    for (var i=0; i < rows.length; i++) {
-        item = rows.item(i);
-    }
 
     let divGroupItem = $('<div class="list-group-item"></div>');
-    let divHeading = $('<div class="list-group-item-heading">' + heading + '</div>');
+    let divHeading = $('<div class="list-group-item-heading">' + heading + '<br />' + item.description + '</div><hr />');
+    // let divDescription = $('<p class="list-group-item-text">' + item.description + '</p><hr />');
+    let divDetails = $('<p class="list-group-item-text"></p>');
+    for (var i=0; i < rows.length; i++) {
+        item = rows.item(i);
+        if (i > 0) {
+            divDetails.append($('<hr />'));
+        }
+        divDetails.append($('<span><strong>Section:</strong> ' + item.section + '<br />'));
+        divDetails.append($('<strong>Shelf:</strong> ' + item.shelf + 
+            ', <strong>Pos:</strong> ' + item.position + 
+            ', <strong>Face:</strong> ' + item.facing + '<br />' +
+            '<strong>Size:</strong> ' + item.size + ' ' + item.units + '</span>'));
+    }
+
     divGroupItem.append(divHeading);
+    // divGroupItem.append(divDescription);
+    divGroupItem.append(divDetails);
     resultsGroup.prepend(divGroupItem);
 }
 
