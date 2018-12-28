@@ -45,15 +45,12 @@ vitdat.webdb.createTable = function() {
     });
 }
 
-vitdat.webdb.addVitamin = function(vitArr) {
-    var db = vitdat.webdb.db;
-    db.transaction(function(tx) {
-      tx.executeSql("INSERT INTO vitamins(upc, orig_upc, section, shelf, position, facing, brand, description, size, units) " +
-      "VALUES (?,?,?,?,?,?,?,?,?,?)",
-          [vitArr[0],vitArr[1],vitArr[2],vitArr[3],vitArr[4],vitArr[5],vitArr[6],vitArr[7],vitArr[8],vitArr[9]],
-          vitdat.webdb.onSuccess,
-          vitdat.webdb.onError);
-    });
+vitdat.webdb.addVitamin = function(vitArr, tx) {
+    tx.executeSql("INSERT INTO vitamins(upc, orig_upc, section, shelf, position, facing, brand, description, size, units) " +
+    "VALUES (?,?,?,?,?,?,?,?,?,?)",
+        [vitArr[0],vitArr[1],vitArr[2],vitArr[3],vitArr[4],vitArr[5],vitArr[6],vitArr[7],vitArr[8],vitArr[9]],
+        vitdat.webdb.onSuccess,
+        vitdat.webdb.onError);
 }
 
 /**
@@ -72,7 +69,10 @@ vitdat.webdb.getVitamin = function(upc, renderFunc) {
 vitdat.webdb.open();
 vitdat.webdb.dropTable();
 vitdat.webdb.createTable();
+
 // Add vitamins data to WebSQL
-for (var i=0; i < vitdb.length; i++) {
-    vitdat.webdb.addVitamin(vitdb[i]);
-}
+vitdat.webdb.db.transaction(function(tx) {
+    for (var i=0; i < vitdb.length; i++) {
+        vitdat.webdb.addVitamin(vitdb[i], tx);
+    }
+});
