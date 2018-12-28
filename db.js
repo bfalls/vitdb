@@ -1,13 +1,33 @@
 var vitdat = {};
 vitdat.webdb = {};
 
+function showError(title, txt) {
+    let divAlert = $('<div class="alert alert-warning alert-dismissible" role="alert"></div>');
+    divAlert.append($('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'));
+    divAlert.append($('<strong>' + title + '</strong> ' + txt));
+    divError.append(divAlert);
+}
+
 vitdat.webdb.open = function() {
     let dbSize = 5 * 1024 * 1024; // 5MB
-    vitdat.webdb.db = openDatabase("Vitamins", "1", "Vitamins Manager", dbSize);
+    try {
+        vitdat.webdb.db = openDatabase("Vitamins", "1", "Vitamins Manager", dbSize);
+        return true;
+    } catch (e) {
+        setTimeout(() => {
+            vitdat.webdb.onError(null, e);
+        });
+    }
+    return false;
 }
   
 vitdat.webdb.onError = function(tx, e) {
-    alert("Database error: " + e.message);
+    let divAlert = $('<div class="alert alert-warning alert-dismissible" role="alert"></div>');
+    divAlert.append($('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'));
+    divAlert.append($('<span><strong>' + e.name + '</strong>: ' + e.message + '</span>'));
+    $('#error').append(divAlert);
+
+    // alert("DB Error: " + e.message);
 }
 
 vitdat.webdb.onSuccess = function(tx, r) {
@@ -66,13 +86,14 @@ vitdat.webdb.getVitamin = function(upc, renderFunc) {
     });
   }
 
-vitdat.webdb.open();
-vitdat.webdb.dropTable();
-vitdat.webdb.createTable();
+if (vitdat.webdb.open()) {
+    vitdat.webdb.dropTable();
+    vitdat.webdb.createTable();
 
-// Add vitamins data to WebSQL
-vitdat.webdb.db.transaction(function(tx) {
-    for (var i=0; i < vitdb.length; i++) {
-        vitdat.webdb.addVitamin(vitdb[i], tx);
-    }
-});
+    // Add vitamins data to WebSQL
+    vitdat.webdb.db.transaction(function(tx) {
+        for (var i=0; i < vitdb.length; i++) {
+            vitdat.webdb.addVitamin(vitdb[i], tx);
+        }
+    });
+}
