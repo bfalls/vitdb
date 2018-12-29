@@ -14,14 +14,14 @@
         <script src="vitdb.js"></script>
         <script src="db.js"></script>
         <style type="text/css">
-        #results-group .list-group-item-heading {
+        /* #results-group .list-group-item-heading {
             background-color: yellow;
-        }
+        } */
         </style>
     </head>
     <body>
         <div class="container-fluid">
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-xs-1"></div>
                 <div class="col-xs-10">
                     <div class="page-header">
@@ -30,13 +30,13 @@
                     </div>
                 </div>
                 <div class="col-xs-1"></div>
-            </div>
+            </div> -->
             <div class="row">
-                <div class="col-xs-1"></div>
-                <div class="col-xs-10">
-                    <form>
+                <!-- <div class="col-xs-1"></div> -->
+                <div class="col-xs-12">
+                    <form id="search-form">
                         <div class="form-group">
-                            <label for="upcCode">UPC Code</label>
+                            <!-- <label for="upcCode">UPC Code</label> -->
                             <div class="input-group">
                                 <input id="search-text" type="text" class="form-control" id="upcCode" placeholder="UPC Code">
                                 <div class="input-group-btn">
@@ -47,19 +47,15 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-xs-1"></div>
+                <!-- <div class="col-xs-1"></div> -->
             </div>
             <div class="row">
-                <div class="col-xs-1"></div>
-                <div class="col-xs-10">
+                <!-- <div class="col-xs-1"></div> -->
+                <div class="col-xs-12">
                     <div id="results-group" class="list-group">
-                        <!-- <a href="#" class="list-group-item active">
-                            <h4 class="list-group-item-heading">List group item heading</h4>
-                            <p class="list-group-item-text">...</p>
-                        </a> -->
                     </div>
                 </div>
-                <div class="col-xs-1"></div>
+                <!-- <div class="col-xs-1"></div> -->
             </div>
         </div>
         <script type="text/javascript">
@@ -67,6 +63,10 @@ var ctlSearchText = $('#search-text');
 var ctlSearchButton = $('#search-btn');
 var resultsGroup = $('#results-group');
 var divError = $('#error');
+$('#search-form').submit((e) => {
+    ctlSearchButton.click();
+    e.preventDefault();
+});
 
 
 
@@ -76,7 +76,7 @@ function buildItemHtml(rows) {
     }
 
     let item = rows.item(0);
-    let heading = item.upc + ' ' + item.brand;
+    let heading = item.upc + ' ' + item.brand + ' Size: ' + item.size + ' ' + item.units;
 
     let divGroupItem = $('<div class="list-group-item"></div>');
     let divHeading = $('<div class="list-group-item-heading">' + heading + '<br />' + item.description + '</div><hr />');
@@ -87,11 +87,11 @@ function buildItemHtml(rows) {
         if (i > 0) {
             divDetails.append($('<hr />'));
         }
-        divDetails.append($('<span><strong>Section:</strong> ' + item.section + '<br />'));
-        divDetails.append($('<strong>Shelf:</strong> ' + item.shelf + 
-            ', <strong>Pos:</strong> ' + item.position + 
-            ', <strong>Face:</strong> ' + item.facing + '<br />' +
-            '<strong>Size:</strong> ' + item.size + ' ' + item.units + '</span>'));
+        divDetails.append($('<span><strong>' + item.section + '</strong>, ' +
+        'Loc: sh: <strong>' + item.shelf + 
+            '</strong>, p: <strong>' + item.position + 
+            '</strong>, f: <strong>' + item.facing +
+            '</strong></span>'));
     }
 
     divGroupItem.append(divHeading);
@@ -106,7 +106,12 @@ function itemFound(tx, res) {
 
 ctlSearchButton.click(() => {
     vitdat.webdb.getVitamin(ctlSearchText.val(), itemFound);
-    
+    setTimeout(() => {
+        ctlSearchText.focus();
+        setTimeout(() => {
+            ctlSearchText.val('');
+        });
+    });
     // Example url for upcitemdb
     // https://api.upcitemdb.com/prod/trial/lookup?upc=747599602061
 });
