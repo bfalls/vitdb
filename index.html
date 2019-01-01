@@ -34,7 +34,7 @@
             </div> -->
             <div class="row">
                 <!-- <div class="col-xs-1"></div> -->
-                <div class="col-xs-12">
+                <div class="col-xs-6">
                     <form id="search-form">
                         <div class="form-group">
                             <!-- <label for="upcCode">UPC Code</label> -->
@@ -48,7 +48,9 @@
                         </div>
                     </form>
                 </div>
-                <!-- <div class="col-xs-1"></div> -->
+                <div class="col-xs-6">
+                    
+                </div>
             </div>
             <div class="row">
                 <!-- <div class="col-xs-1"></div> -->
@@ -124,7 +126,9 @@ function itemFound(tx, res) {
 
 ctlSearchButton.click(() => {
     lastSearchText = ctlSearchText.val();
-    if (lastSearchText.length == 10) {
+    if (lastSearchText.match(/.*[a-zA-Z].*/)) { // text match
+        vitdat.webdb.findVitaminByText(lastSearchText.toUpperCase(), itemFound);
+    } else if (lastSearchText.length == 10) {
         vitdat.webdb.findPartialVitamin(lastSearchText, itemFound);    
     } else {
         vitdat.webdb.getVitamin(lastSearchText, itemFound);

@@ -2,7 +2,7 @@
 
 # Run using ./prepvsec /Users/yuliafalls/Desktop/vitamins\ planograms/*.csv
 
-F=$1
+# F=$1
 OUTDIR=~/prepvsecd
 mkdir -p ${OUTDIR}
 FINALFILE="${OUTDIR}"/final.csv
