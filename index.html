@@ -124,7 +124,11 @@ function itemFound(tx, res) {
 
 ctlSearchButton.click(() => {
     lastSearchText = ctlSearchText.val();
-    vitdat.webdb.getVitamin(lastSearchText, itemFound);
+    if (lastSearchText.length == 10) {
+        vitdat.webdb.findPartialVitamin(lastSearchText, itemFound);    
+    } else {
+        vitdat.webdb.getVitamin(lastSearchText, itemFound);
+    }
     setTimeout(() => {
         ctlSearchText.focus();
         setTimeout(() => {

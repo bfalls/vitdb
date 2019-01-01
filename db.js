@@ -84,7 +84,15 @@ vitdat.webdb.getVitamin = function(upc, renderFunc) {
       tx.executeSql("SELECT * FROM vitamins WHERE upc = ?", [upc], renderFunc,
       vitdat.webdb.onError);
     });
-  }
+}
+
+vitdat.webdb.findPartialVitamin = function(upc, renderFunc) {
+    var db = vitdat.webdb.db;
+    db.transaction(function(tx) {
+      tx.executeSql("SELECT * FROM vitamins WHERE upc LIKE ?", ['_'+upc+'_'], renderFunc,
+      vitdat.webdb.onError);
+    });
+}
 
 if (vitdat.webdb.open()) {
     vitdat.webdb.dropTable();
