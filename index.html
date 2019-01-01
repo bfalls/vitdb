@@ -42,7 +42,7 @@
                                 <input id="search-text" type="text" class="form-control" id="upcCode" placeholder="UPC Code">
                                 <div class="input-group-btn">
                                     <button id="search-btn" type="button" class="btn btn-default" aria-label="Search"><span class="glyphicon glyphicon-search"></span></button>
-                                    <button type="button" class="btn btn-default">Action</button>
+                                    <!-- <button type="button" class="btn btn-default">Action</button> -->
                                 </div>
                             </div>
                         </div>
@@ -134,6 +134,10 @@ ctlSearchButton.click(() => {
     // Example url for upcitemdb
     // https://api.upcitemdb.com/prod/trial/lookup?upc=747599602061
 });
+
+setTimeout(() => {
+    ctlSearchText.focus();
+}, 500);
 
         </script>
     </body>
