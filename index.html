@@ -14,9 +14,10 @@
         <script src="vitdb.js"></script>
         <script src="db.js"></script>
         <style type="text/css">
-        /* #results-group .list-group-item-heading {
-            background-color: yellow;
-        } */
+        #results-group .list-group-item-heading {
+            overflow-x: hidden;
+            white-space: nowrap;
+        }
         </style>
     </head>
     <body>
@@ -63,6 +64,7 @@ var ctlSearchText = $('#search-text');
 var ctlSearchButton = $('#search-btn');
 var resultsGroup = $('#results-group');
 var divError = $('#error');
+var lastSearchText = '';
 $('#search-form').submit((e) => {
     ctlSearchButton.click();
     e.preventDefault();
@@ -70,33 +72,49 @@ $('#search-form').submit((e) => {
 
 
 
-function buildItemHtml(rows) {
-    if (rows.length === 0) {
-        return; // NOT FOUND!
-    }
 
-    let item = rows.item(0);
-    let heading = item.upc + ' ' + item.brand + ' Size: ' + item.size + ' ' + item.units;
+
+function buildItemHtml(rows) {
+    let isFound = true;
+    if (rows.length === 0) {
+        isFound = false;
+    }
+    // https://www.upcitemdb.com/upc/638242707007
+    let item = isFound ? rows.item(0) : {
+        upc: lastSearchText,
+        description: 'NOT FOUND - <a target="_blank" href="https://www.upcitemdb.com/upc/' + lastSearchText +'">upcitemdb</a>'
+    };
+    let itemLen = item.upc.length;
+    let itemupc = item.upc;
+    let fmtItemupc = itemupc[0] + ' ' + itemupc.slice(1,6) + ' ' + itemupc.slice(6,11) + ' ' + itemupc[11];
+    if (itemLen === 13) {
+        fmtItemupc = itemupc[0] + ' ' + itemupc.slice(1,7) + ' ' + itemupc.slice(7,13);
+    }
+    
+    let heading = fmtItemupc + ' - ';
+    if (isFound) {
+        heading += item.brand + ' Size: ' + item.size + ' ' + item.units;
+    }
 
     let divGroupItem = $('<div class="list-group-item"></div>');
-    let divHeading = $('<div class="list-group-item-heading">' + heading + '<br />' + item.description + '</div><hr />');
-    // let divDescription = $('<p class="list-group-item-text">' + item.description + '</p><hr />');
-    let divDetails = $('<p class="list-group-item-text"></p>');
-    for (var i=0; i < rows.length; i++) {
-        item = rows.item(i);
-        if (i > 0) {
-            divDetails.append($('<hr />'));
+    let divHeading = $('<div class="list-group-item-heading">' + heading + '<br />' + item.description + '</div>');
+    divGroupItem.append(divHeading);
+    if (isFound) {
+        let divDetails = $('<p class="list-group-item-text"></p>');
+        for (var i=0; i < rows.length; i++) {
+            item = rows.item(i);
+            if (i > 0) {
+                divDetails.append($('<br />'));
+            }
+            divDetails.append($('<span><strong>' + item.section + '</strong>, ' +
+            'sh: <strong>' + item.shelf + 
+                '</strong>, p: <strong>' + item.position + 
+                '</strong>, f: <strong>' + item.facing +
+                '</strong></span>'));
         }
-        divDetails.append($('<span><strong>' + item.section + '</strong>, ' +
-        'Loc: sh: <strong>' + item.shelf + 
-            '</strong>, p: <strong>' + item.position + 
-            '</strong>, f: <strong>' + item.facing +
-            '</strong></span>'));
+        divGroupItem.append(divDetails);
     }
 
-    divGroupItem.append(divHeading);
-    // divGroupItem.append(divDescription);
-    divGroupItem.append(divDetails);
     resultsGroup.prepend(divGroupItem);
 }
 
@@ -105,7 +123,8 @@ function itemFound(tx, res) {
 }
 
 ctlSearchButton.click(() => {
-    vitdat.webdb.getVitamin(ctlSearchText.val(), itemFound);
+    lastSearchText = ctlSearchText.val();
+    vitdat.webdb.getVitamin(lastSearchText, itemFound);
     setTimeout(() => {
         ctlSearchText.focus();
         setTimeout(() => {

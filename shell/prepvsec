@@ -1,0 +1,283 @@
+#!/bin/bash
+
+# Run using ./prepvsec /Users/yuliafalls/Desktop/vitamins\ planograms/*.csv
+
+F=$1
+OUTDIR=~/prepvsecd
+mkdir -p ${OUTDIR}
+FINALFILE="${OUTDIR}"/final.csv
+IDBFILE="${OUTDIR}"/idb.csv
+DBFILE="${OUTDIR}"/db.csv
+DBJSFILE="${OUTDIR}"/vitdb.js
+rm -f "$FINALFILE" "${DBFILE}" "${IDBFILE}" "${DBJSFILE}"
+FILENAMESFILE="${OUTDIR}"/filenames
+rm -f "${FILENAMESFILE}"
+rm -f ${OUTDIR}/*
+
+for F in "$@"
+do
+	TF="$F".out
+	# Clean the file
+	sed -e '/^,,,,/d' -e '/^----/d' -e '/^Posit/d' "$F" > "$TF"
+	FN="${F##*/}"
+	FN="${FN%%.*}"
+	echo "$FN"
+	echo "$FN" >> "${FILENAMESFILE}"
+
+	RESETDATE=`sed -n 's/.* Reset \([0-9]*\)\/\([0-9]*\)\/\([0-9]*\) .*/\1-\2-\3/p' "$TF"`
+	echo Reset Date: $RESETDATE
+
+	PUBDATE=`sed -n 's/^Notes.*"\([0-9]*\)\/\([0-9]*\)\/\([0-9]*\)/\1-\2-\3/p' "$TF"`
+	echo Publish Date: $PUBDATE
+
+	OUT="${F##*/}"
+	OUT=${OUTDIR}/"${OUT%%.*}"-RESET-${RESETDATE}-PUB-${PUBDATE}.csv
+	echo Output: $OUT
+	> "$OUT" # truncate file to zero length
+
+	# Get the number of shelves: 
+	SHELVES=`sed -n -e 's/"Shelf: \([0-9]*\).*/\1/p' "$TF" | tail -1`
+	echo There are $SHELVES shelves
+
+	# start loop
+	I=1
+	while [ $I -le $SHELVES ]; do
+		# Isolate one shelf
+		# delete first and last line
+		# prepend shelf number
+		sed -n "/\"Shelf: $I,/,/Totals:/p" "$TF" | sed -e '1d' -e '$d' | sed -n "s/\(^[0-9]*,\)/$I,\1/p" | tr -s ',' | cut -f 1-20 -d ',' >> "$OUT"
+		let I=I+1 
+	done
+
+	# prepend the file name
+	sed -i'.tmp' -e "s/^/$FN,/" "$OUT"
+
+	# move UPC to front
+	awk -F',' '{OFS=","; print $4,$1,"shelf "$2,"pos "$3,"f "$5,$6,$7,$8,$9}' "$OUT" > "$TF" && mv -f "$TF" "$OUT"
+	rm -f "${OUTDIR}"/*.tmp
+done
+
+# combine files to one file
+cat "${OUTDIR}"/*.csv > "${FINALFILE}"
+
+# Important!!! OLDNAMES and NEWNAMES need to have the same size
+OLDNAMES=("aloe vera-energy"
+"amino acids"
+"aromatherapy"
+"baby body care"
+"bar-soap-travel-trial"
+"bath-shower-care"
+"blood sugar"
+"brain-eyes-anti-deep imm"
+"bulletproof-display"
+"calcium-bone"
+"childrens health"
+"cleanse-fiber"
+"cooler-probiotics-oils"
+"cosmetics-fixture"
+"dental-care"
+"deodorant-shave"
+"diet-weight aids"
+"digestive health"
+"electrolytes"
+"emotional wellness"
+"facial care"
+"fem-cooler"
+"first aid"
+"fish-plant-probiotics"
+"front-end"
+"functional foods-energy"
+"greens"
+"hair care"
+"hba slat wall"
+"heart-garlic-cholesterol"
+"herbs"
+"homeopathics-topicals"
+"joint health"
+"liquid soap"
+"liver-detox"
+"lotion"
+"mans health"
+"minerals"
+"multivitamins"
+"protein powders"
+"resp-ears-nose-throat"
+"seasonal wellness"
+"shadow box-protein packets"
+"sports nutrition"
+"sun-care-aloe-bug"
+"vitamin B"
+"vitamin C"
+"vitamins adek"
+"womens health")
+
+NEWNAMES=("aloe"
+"aminos"
+"aroma"
+"baby-care"
+"bar-soap"
+"bath-shower"
+"blood"
+"brain"
+"bulletproof"
+"calcium"
+"childrens"
+"fiber"
+"cooler"
+"cosmetics"
+"dental"
+"deodorants"
+"diet-weight"
+"digestive"
+"electrolytes"
+"emotional"
+"facial"
+"fem-cooler"
+"first-aid"
+"oils-prob"
+"front-end"
+"functional"
+"greens"
+"hair-care"
+"hba-slat-wall"
+"heart"
+"herbs"
+"homeo"
+"joints"
+"liquid-soap"
+"liver"
+"lotion"
+"mens"
+"minerals"
+"multis"
+"proteins"
+"resper"
+"seasonal"
+"prot-pack"
+"sports"
+"sun-care"
+"vit-B"
+"vit-C"
+"vit-adek"
+"womens")
+
+LN=`expr ${#OLDNAMES[@]} - 1`
+for I in `seq 0 $LN`; do
+	sed -i'.tmp' -e "s/${OLDNAMES[I]}/${NEWNAMES[I]}/" "${FINALFILE}"
+done
+cp "${FINALFILE}" "${IDBFILE}"
+
+# starting with 00 is UPC-A
+# otherwise, EAN-13
+# Strip the first zero only
+#sed -i'.tmp' -e 's/0\([0-9]*\),\(.*$\)/\1,0\1,\2/' "${DBFILE}"
+#rm -f "${OUTDIR}"/*.tmp
+
+# calculate checksum
+echo Calculating Checksums
+LN=`wc -l "${IDBFILE}" | awk '{print $1;}'`
+echo Length $LN
+I=1
+OPCT=0
+while read -r L; do
+	PCT=`expr $I \* 100 / $LN`
+	TMP=`expr $PCT % 5`
+#	echo $TMP
+	if [ $TMP -eq 0 -a ${OPCT} -ne ${PCT} ]; then
+		echo -n "${PCT},"
+		OPCT=${PCT}
+	fi
+	# echo '--------'
+	UPC=`echo ${L} | awk -F, '{print $1;}'`
+	UPCSTR=`echo ${L} | awk -F, '{print $1;}'`
+	
+	UPC=`expr $UPC + 0` # UPC is now numeric
+	BY3=1
+#	echo $UPC
+	CHKSUM=0
+	while [ ${UPC} -gt 0 ]; do
+		N=$((UPC % 10))
+		let UPC=UPC/10
+		# echo $N
+		if [ $BY3 -eq 1 ]; then
+			N=`expr $N \* 3`
+			BY3=0
+		else
+			BY3=1
+		fi
+		CHKSUM=`expr $CHKSUM + $N`
+	done
+	N=$((CHKSUM % 10))
+	if [ $N -eq 0 ]; then
+		CHKSUM=0
+	else
+		CHKSUM=`expr 10 - $N`
+	fi
+	
+	# append checksum
+	UPCSTR="${UPCSTR}${CHKSUM}"	
+	UPCSTR=`sed -e 's/^00\([0-9]*\)/\1/' <<< ${UPCSTR}`
+	if [ ${#UPCSTR} -eq 14 -a ${UPCSTR:0:1} == "0" ]; then
+		UPCSTR=${UPCSTR:1}
+	fi
+	
+	echo ${UPCSTR},$L >> "${DBFILE}"
+	
+	# echo '============'
+	let I=I+1
+done < "${IDBFILE}"
+rm -f "${IDBFILE}"
+
+# Create vitdb.js from the db.csv
+sed -e 's/,shelf /,/' -e 's/,pos /,/' -e 's/,f /,/' -e 's/,/","/g' -e 's/$/"],/' -e 's/^/["/' -e '1 s/^/var vitdb = [/' -e '$ s/$/];/' "${DBFILE}" > "${DBJSFILE}"
+
+
+echo Processing Duplicates
+
+# list the items that are duplicate	
+DUPSFILE="${OUTDIR}"/dups.csv
+UPCSFILE="${OUTDIR}"/upcs
+GROUPBYSECTIONSFILE="${OUTDIR}"/group-by-sections.csv
+> "$DUPSFILE" # truncate file to zero length
+> "$GROUPBYSECTIONSFILE" # truncate file to zero length
+
+# get duplicated UPC codes
+cat "${FINALFILE}" | sort | awk -F, '{print $1;}' | uniq -d > "${UPCSFILE}"
+
+# display all duplicates
+while read -r UPC; do
+	grep "$UPC" "${FINALFILE}" >> "${DUPSFILE}"
+	echo >> "${DUPSFILE}"
+	echo >> "${DUPSFILE}"
+done < "${UPCSFILE}"
+
+# for each file name (i.e. herbs)
+# -------------------------------
+echo Processing Sections
+echo
+IFS=',' # make input field separator comma
+EXCLUDE_FILES=("front-end")
+unset IFS
+SECTIONUPCSFILE="${OUTDIR}"/section-upcs
+I=1
+while read -r FN; do
+	echo -n "$I",
+	if [[ ",${EXCLUDE_FILES[@]}," =~ ",${FN}," ]]; then
+		echo Skipping "$FN"
+		let I=I+1
+		continue
+	fi
+	sed -n "s/^\([0-9]*\),${FN},.*/\1/p" "${DUPSFILE}" | sort | uniq > "${SECTIONUPCSFILE}"
+	
+	# display all duplicates
+	echo "$FN" | awk '{print toupper($0);}' >> "${GROUPBYSECTIONSFILE}"
+	while read -r UPC; do
+		grep "$UPC" "${FINALFILE}" >> "${GROUPBYSECTIONSFILE}"
+		echo >> "${GROUPBYSECTIONSFILE}"
+		echo >> "${GROUPBYSECTIONSFILE}"
+	done < "${SECTIONUPCSFILE}"
+	let I=I+1
+done < "${FILENAMESFILE}"
+
+echo
+echo Duplicates file: "${DUPSFILE}"
