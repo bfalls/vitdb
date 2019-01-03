@@ -223,7 +223,7 @@ Totals:,,,,,18,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 ,,,,,---------------,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 Totals:,,,,,11,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 "Shelf: 10,   Length: 4' 0.00"",    Height: 0' 6.50"",   Depth: 1' 1.00"",   Product: 3' 11.88""",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-1                       0007628036661                1,,,,,,,,,,SOLARAY,,,CIRCULEGS HORSE CHESTNUT SPECIAL FOR,,,,,,,60.00,,,,,CAP,,,Jun 12 2016 1,,,,,1.99,,
+1,0007628036661,1,,,,,,,,,,SOLARAY,,,CIRCULEGS HORSE CHESTNUT SPECIAL FOR,,,,,,,60.00,,,,,CAP,,,Jun 12 2016 1,,,,,1.99,,
 Positio,,,,UPC,,Facings,,,,,Brand,,,,,Long Description,,,,Size,,,,UOM,,,,,Date,,,Width,,,
 -----------   --------------------------------- ------------------------------------------------------------------------------------------------------------------ ------------ -------------------- ---------------,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 2,0006895804943,,,,1,,,NATURAL FACTORS,,,,,,VEINSENSE,,,,60.00,,,,VCP,,,,,,,,2.21,,,,,
@@ -341,18 +341,18 @@ Totals:,,,,,17,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 6,0009492237217,,,,1,,,RESERVEAGE,,,,,,ULTRA COLLAGEN BOOSTER,,,,90.00,,,,CAP,,,,Jun 12 2016 1,,,,2.48,,,,,
 Positio,,,,UPC,,Facings,,,,,Brand,,,,,Long Description,,,,Size,,,,UOM,,,,,Date,,,Width,,,
 -----------   --------------------------------- ------------------------------------------------------------------------------------------------------------------ ------------ -------------------- ---------------,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-7,0085980500614,1,ZHOU,HAIRFLUENCE,60.00,VCP
-8,0001618512931,1,NEOCELL,COLLAGEN BEAUTY BUILDER,150.00,TAB
-9,0001618512955,1,NEOCELL,GLOW MATRIX-ADVANCED SKIN HYDRATOR,90.00,CAP
-10,0085324400300,1,YOUTHEORY,COLLAGEN TYPE 1 & 3,120.00,TAB
-11,0085324400313,1,YOUTHEORY,MARINE COLLAGEN ADVANCED TYPE 1 & 3,160.00,TAB
-12,0085324400307,1,YOUTHEORY,COLLAGEN ADVANCED TYPE 1 2 & 3,160.00,TAB
-13,0085324400303,1,YOUTHEORY,COLLAGEN ADVANCED TYPE 1 2 & 3,290.00,TAB
-14,0085324400376,1,YOUTHEORY,COLLAGEN POWDER-TYPE 1 & 3,4.70,OZ
-15,0085050200704,1,YOUTHEORY,COLLAGEN-POWDER-PACKET,0.27,OZ
-16,0085050200705,1,YOUTHEORY,COLLAGEN-POWDER-PACKETS-CS,5.70,OZ
-17,0075395000204,1,DOCTORS BEST,BEST COLLAGEN TYPES 1&3,180.00,TAB
-18,0075395000203,1,DOCTORS BEST,BEST COLLAGEN TYPES 1&3-POWDER,7.10,OZ
+7,0085980500614,1,ZHOU,HAIRFLUENCE,60.00,VCP,
+8,0001618512931,1,NEOCELL,COLLAGEN BEAUTY BUILDER,150.00,TAB,
+9,0001618512955,1,NEOCELL,GLOW MATRIX-ADVANCED SKIN HYDRATOR,90.00,CAP,
+10,0085324400300,1,YOUTHEORY,COLLAGEN TYPE 1 & 3,120.00,TAB,
+11,0085324400313,1,YOUTHEORY,MARINE COLLAGEN ADVANCED TYPE 1 & 3,160.00,TAB,
+12,0085324400307,1,YOUTHEORY,COLLAGEN ADVANCED TYPE 1 2 & 3,160.00,TAB,
+13,0085324400303,1,YOUTHEORY,COLLAGEN ADVANCED TYPE 1 2 & 3,290.00,TAB,
+14,0085324400376,1,YOUTHEORY,COLLAGEN POWDER-TYPE 1 & 3,4.70,OZ,
+15,0085050200704,1,YOUTHEORY,COLLAGEN-POWDER-PACKET,0.27,OZ,
+16,0085050200705,1,YOUTHEORY,COLLAGEN-POWDER-PACKETS-CS,5.70,OZ,
+17,0075395000204,1,DOCTORS BEST,BEST COLLAGEN TYPES 1&3,180.00,TAB,
+18,0075395000203,1,DOCTORS BEST,BEST COLLAGEN TYPES 1&3-POWDER,7.10,OZ,
 Totals:,,
 "Shelf: 16,   Length: 4' 0.00"",    Height: 1' 0.00"",   Depth: 1' 1.00"",   Product: 3' 11.98""",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 1,0001618512900,,,,1,,,NEOCELL,,,,,,FISH COLLAGEN HYALURONIC ACID,,,,120.00,,,,CAP,,,,Jun 12 2016 1,,,,2.40,,,,,
