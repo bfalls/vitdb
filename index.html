@@ -49,7 +49,7 @@
                     </form>
                 </div>
                 <div class="col-xs-6">
-                    
+
                 </div>
             </div>
             <div class="row">
@@ -102,17 +102,17 @@ function buildItemHtml(rows) {
     let divHeading = $('<div class="list-group-item-heading">' + heading + '<br />' + item.description + '</div>');
     divGroupItem.append(divHeading);
     if (isFound) {
-        let divDetails = $('<p class="list-group-item-text"></p>');
+        let divDetails = $('<div class="list-group-item-text"></div>');
         for (var i=0; i < rows.length; i++) {
             item = rows.item(i);
             if (i > 0) {
                 divDetails.append($('<br />'));
             }
-            divDetails.append($('<span><strong>' + item.section + '</strong>, ' +
+            divDetails.append($('<div><strong>' + item.section + '</strong>, ' +
             'sh: <strong>' + item.shelf + 
                 '</strong>, p: <strong>' + item.position + 
                 '</strong>, f: <strong>' + item.facing +
-                '</strong></span>'));
+                '</strong></div>'));
         }
         divGroupItem.append(divDetails);
     }
